@@ -73,6 +73,7 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]){
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            sleep 7
                             if wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '404'; then
                                 echo "Aplikasi berhasil dijalankan dengan status 404!"
                             elif wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '200'; then
