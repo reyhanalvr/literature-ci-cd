@@ -10,6 +10,8 @@ pipeline {
         PORT = "${BACKEND_STAGING_PORT}"
         APP_URL = "${BACKEND_STAGING_URL}"
         CONTAINER_NAME = "backend-staging-test"
+        DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
+
     }
 
     stages {
@@ -85,6 +87,21 @@ pipeline {
                             fi
                             exit
                             EOF
+                        """
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image'){
+            steps{
+                script{
+                    sshagent([SSH_CREDENTIALS]){
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+                        echo "test login docker"
+                        exit
+                        EOF
                         """
                     }
                 }
