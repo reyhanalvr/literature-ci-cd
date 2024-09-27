@@ -7,6 +7,8 @@ pipeline {
         REPO_DIR = "${REPO_DIR}" 
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
+        PORT = "${BACKEND_STAGING_PORT}"
+        APP_URL = "${BACKEND_STAGING_URL}"
     }
 
     stages {
@@ -51,12 +53,34 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            docker run -d -p 5005:5000 --name backend-staging-test ${DOCKER_IMAGE}
+                             if [ \$(docker ps -aq -f name=backend-staging-test) ]; then
+                                docker rm -f backend-staging-test
+                            fi
+                            
+                            docker run -d -p ${PORT}:5000 --name backend-staging-test ${DOCKER_IMAGE}
                             echo "Aplikasi telah dijalankan!"
                             exit
                         EOF
                     """
                     }
+                }
+            }
+        }
+        stage('Test Application'){
+            steps{
+                script{
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        if wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '404'; then
+                            echo "Aplikasi berhasil dijalankan dengan status 404!"
+                        elif wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '200'; then
+                            echo "Aplikasi berjalan dengan baik!"
+                        else
+                            echo "Aplikasi gagal dijalankan."
+                        fi
+                        exit
+                        EOF
+                        """
                 }
             }
         }
