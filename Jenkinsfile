@@ -60,8 +60,8 @@ pipeline {
                             docker run -d -p ${PORT}:5000 --name backend-staging-test ${DOCKER_IMAGE}
                             echo "Aplikasi telah dijalankan!"
                             exit
-                        EOF
-                    """
+                            EOF
+                            """
                     }
                 }
             }
