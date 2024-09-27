@@ -30,6 +30,7 @@ pipeline {
                         cd ${REPO_DIR} 
                         git pull origin staging
                         echo "Git Pull Telah Berhasil"
+                        pm2 restart all
                         exit
                         EOF
                         """
