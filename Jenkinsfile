@@ -126,11 +126,11 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
                             
-                            # Menjalankan aplikasi on top docker
+                            echo "Deploy aplikasi on top docker"
                             docker compose down
                             docker compose up -d
 
-                            # Aplikasi berhasil dijalankan
+                            echo "Aplikasi telah berjalan"
                             exit
                             EOF
                         """
