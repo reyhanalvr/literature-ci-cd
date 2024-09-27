@@ -58,6 +58,8 @@ pipeline {
                                 echo "Menghapus container ${CONTAINER_NAME}"
                                 docker rm -f ${CONTAINER_NAME}
                             fi
+
+                            sleep 5
                             
                             docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
                             echo "Aplikasi telah dijalankan!"
