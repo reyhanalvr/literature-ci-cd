@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs '16.6.0'
+    }
+    
     environment {
         REMOTE_SERVER = "${REMOTE_SERVER_STAGING}"
         SSH_USER = "${REMOTE_USER}"
@@ -52,8 +56,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
-                            npm install
-                            pm2 -v
+                            sh 'npm version'
                             echo "Aplikasi telah berjalan"
                             exit
                         EOF
