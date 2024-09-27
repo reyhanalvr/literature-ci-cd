@@ -69,18 +69,20 @@ pipeline {
         stage('Test Application'){
             steps{
                 script{
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        if wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '404'; then
-                            echo "Aplikasi berhasil dijalankan dengan status 404!"
-                        elif wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '200'; then
-                            echo "Aplikasi berjalan dengan baik!"
-                        else
-                            echo "Aplikasi gagal dijalankan."
-                        fi
-                        exit
-                        EOF
-                        """
+                    sshagent([SSH_CREDENTIALS]){
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            if wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '404'; then
+                                echo "Aplikasi berhasil dijalankan dengan status 404!"
+                            elif wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '200'; then
+                                echo "Aplikasi berjalan dengan baik!"
+                            else
+                                echo "Aplikasi gagal dijalankan."
+                            fi
+                            exit
+                            EOF
+                            """
+                    }
                 }
             }
         }
