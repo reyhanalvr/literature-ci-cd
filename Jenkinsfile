@@ -54,10 +54,11 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            docker ps -a | grep ${CONTAINER_NAME}
+                            
+                            echo "Menghapus container ${CONTAINER_NAME}"
+                            docker rm -f ${CONTAINER_NAME}
 
-
-                            sleep 5
+                            sleep 2
                             
                             docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
                             echo "Aplikasi telah dijalankan!"
