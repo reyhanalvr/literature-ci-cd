@@ -15,10 +15,13 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} 'cd ${REPO_DIR} && git pull origin staging'
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR} 
+                        git pull origin staging
                         echo "Git Pull Telah Berhasil"
                         exit
-                        EOF"""
+                        EOF
+                        """
                     }
                 }
             }
@@ -29,13 +32,13 @@ pipeline {
                    script{
                        sshagent([SSH_CREDENTIALS]) {
                            sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} '
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
                             docker build -t ${DOCKER_IMAGE} .
                             docker images
                             echo "Docker Image Build Berhasil"
                             exit
-                            '
+                           EOF
                            """
                        }
                   }
