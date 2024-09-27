@@ -78,7 +78,7 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             # Menguji aplikasi dengan wget
                             sleep 3
-                            if [wget --spider -q --server-response http://127.0.0.1:5009/ 2>&1 | grep "404 Not Found"]; then
+                            if [wget --spider -q --server-response ${APP_URL} 2>&1 | grep "404 Not Found"]; then
                             echo "Aplikasi berhasil dijalankan"
                             else 
                                 echo "Aplikasi gagal dijalankan"
