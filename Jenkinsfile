@@ -52,6 +52,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
+                            npm install
                             pm2 -v
                             echo "Aplikasi telah berjalan"
                             exit
