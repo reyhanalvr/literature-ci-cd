@@ -53,7 +53,8 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                             if [ \$(docker ps -aq -f name=backend-staging-test) ]; then
+                            if [ \$(docker ps -aq -f name=backend-staging-test) ]; then
+                                echo "Menghapus kontainer backend-staging-test yang sudah ada."
                                 docker rm -f backend-staging-test
                             fi
                             
