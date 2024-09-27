@@ -16,7 +16,7 @@ pipeline {
     }
 
     stages {
-        stage('Pull dari Staging Repository') {
+        stage('Pull Repository') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -65,7 +65,7 @@ pipeline {
 
                             echo "Menjalankan container ${CONTAINER_NAME}"
                             docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
-                            echo "Aplikasi telah dijalankan!"
+                            echo "Backend running"
                             exit
                             EOF
                             """
@@ -82,9 +82,9 @@ pipeline {
                             # Menguji aplikasi dengan wget
                             sleep 3
                             if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
-                            echo "Aplikasi berhasil dijalankan"
+                            echo "Backend berjalan "
                             else 
-                                echo "Aplikasi gagal dijalankan"
+                                echo "Backend tidak berjalan"
                             fi
                             exit
                             EOF
@@ -114,6 +114,24 @@ pipeline {
                         EOF
                         """
                         }
+                    }
+                }
+            }
+        }
+        stage('Deploy App on Top Docker'){
+            steps{
+                script{
+                    sshagent([SSH_CREDENTIALS]){
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            # Menjalankan aplikasi on top docker
+                            docker compose down
+                            docker compose up -d
+
+                            # Aplikasi berhasil dijalankan
+                            exit
+                            EOF
+                        """
                     }
                 }
             }
