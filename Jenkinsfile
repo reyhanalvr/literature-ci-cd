@@ -52,7 +52,7 @@ pipeline {
                         sh """
                         ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                         cd ${REPO_DIR}
-                        pm2 start ecosystem.config.js
+                        pm2 start ecosystem.config.js || { echo 'PM2 Gagal Menjalankan Aplikasi'; exit 1; }
                         pm2 ls
                         echo "Aplikasi telah berjalan"
                         exit
