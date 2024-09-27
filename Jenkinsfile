@@ -11,6 +11,7 @@ pipeline {
         APP_URL = "${BACKEND_STAGING_URL}"
         CONTAINER_NAME = "backend-staging-test"
         DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
+        DOCKERHUB_REPO = "${DOCKERHUB_BE_STAGING_REPO}"
 
     }
 
@@ -99,8 +100,16 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]){
                         sh """
                         ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        # Login ke Dockerhub
                         echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-                        echo "test login docker"
+            
+                        docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:staging
+
+                        # Melakukan push ke Dockerhub
+                        docker push ${DOCKERHUB_REPO}:staging
+
+                        sleep 1
+                        # Docker image telah di push ke repository
                         exit
                         EOF
                         """
