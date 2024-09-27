@@ -17,14 +17,18 @@ pipeline {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
-                        sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        cd ${REPO_DIR} 
-                        git pull origin staging
-                        echo "Git Pull Telah Berhasil"
-                        exit
-                        EOF
-                        """
+                        try {
+                            sh """
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            cd ${REPO_DIR} 
+                            git pull origin staging
+                            echo "Git Pull Telah Berhasil"
+                            exit
+                            EOF
+                            """
+                        } catch (Exception e) {
+                            error "Gagal menarik dari repository: ${e.message}"
+                        }
                     }
                 }
             }
@@ -34,15 +38,19 @@ pipeline {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
-                        sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        cd ${REPO_DIR} 
-                        docker build -t ${DOCKER_IMAGE} .
-                        docker images
-                        echo "Docker Image Build Berhasil"
-                        exit
-                        EOF
-                        """
+                        try {
+                            sh """
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            cd ${REPO_DIR} 
+                            docker build -t ${DOCKER_IMAGE} .
+                            docker images
+                            echo "Docker Image Build Berhasil"
+                            exit
+                            EOF
+                            """
+                        } catch (Exception e) {
+                            error "Gagal membangun Docker image: ${e.message}"
+                        }
                     }
                 }
             }
@@ -52,7 +60,8 @@ pipeline {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
-                      sh """
+                        try {
+                            sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             
                             echo "Menghapus container ${CONTAINER_NAME}"
@@ -66,26 +75,35 @@ pipeline {
                             exit
                             EOF
                             """
+                        } catch (Exception e) {
+                            error "Gagal menjalankan aplikasi: ${e.message}"
+                        }
                     }
                 }
             }
         }
+
         stage('Test Application'){
             steps{
                 script{
                     sshagent([SSH_CREDENTIALS]){
-                        sh """
+                        try {
+                            sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             # Menguji aplikasi dengan wget
                             sleep 3
-                            if wget --spider -q --server-response ${APP_URL} 2>&1 | grep "404 Not Found"; then
-                            echo "Aplikasi berhasil dijalankan"
+                            if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
+                                echo "Aplikasi berhasil dijalankan"
                             else 
                                 echo "Aplikasi gagal dijalankan"
+                                exit 1
                             fi
                             exit
                             EOF
-                        """
+                            """
+                        } catch (Exception e) {
+                            error "Pengujian aplikasi gagal: ${e.message}"
+                        }
                     }
                 }
             }
