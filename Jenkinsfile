@@ -45,17 +45,32 @@ pipeline {
              }
         }
 
+        stage ('Install PM2') {
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        npm install pm2 -g || { echo 'Instalasi PM2 Gagal'; exit 1; }
+                        echo "PM2 telah terinstal"
+                        EOF
+                        """
+                    }
+                }
+            }
+        }
+
         stage ('Run Application') {
             steps {
                 script{
                     sshagent([SSH_CREDENTIALS]){
                         sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        cd ${REPO_DIR}
-                        pm2 start ecosystem.config.js || { echo 'PM2 Gagal Menjalankan Aplikasi'; exit 1; }
-                        pm2 ls
-                        echo "Aplikasi telah berjalan"
-                        exit
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            cd ${REPO_DIR}
+                            pm2 start ecosystem.config.js || { echo 'PM2 Gagal Menjalankan Aplikasi'; exit 1; }
+                            pm2 ls
+                            echo "Aplikasi telah berjalan"
+                            exit
                         EOF
                         """
                     }
