@@ -13,7 +13,7 @@ pipeline {
     }
 
     stages {
-        stage('Pull dari Staging Repository') {
+        stage('Pull Staging Repository') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -21,7 +21,7 @@ pipeline {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
-                            git pull origin staging
+                            git pull origign staging
                             echo "Git Pull Telah Berhasil"
                             exit
                             EOF
