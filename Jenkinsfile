@@ -20,7 +20,6 @@ pipeline {
                 sh 'npm --version'
                 }
             }
-        }
         stage('Pull dari Staging Repository') {
             steps {
                 script {
