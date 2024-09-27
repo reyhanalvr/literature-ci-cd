@@ -14,7 +14,6 @@ pipeline {
     }
 
     stages {
-        stages {
         stage('Verify Node.js Installation') {
             steps {
                 sh 'node --version'
