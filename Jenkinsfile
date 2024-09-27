@@ -60,12 +60,13 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        cd ${REPO_DIR}
-                        npm start
-                        echo "Aplikasi telah berjalan"
-                        exit
-                        EOF
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            export PATH=\$PATH:/home/alvaro/.nvm/versions/node/v16.20.2/bin
+                            cd ${REPO_DIR}
+                            npm start
+                            echo "Aplikasi telah berjalan"
+                            exit
+                            EOF
                         """
                     }
                 }
