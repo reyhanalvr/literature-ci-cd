@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     tools {
         nodejs "npm"
     }
@@ -12,13 +11,11 @@ pipeline {
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
     }
-
     stages {
         stage('Verify Node.js Installation') {
             steps {
                 sh 'node --version'
                 sh 'npm --version'
-                }
             }
         }
         stage('Pull dari Staging Repository') {
@@ -37,34 +34,37 @@ pipeline {
                 }
             }
         }
-
         stage ('Build docker image') {
-               steps{
-                   script{
-                       sshagent([SSH_CREDENTIALS]) {
-                           sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            cd ${REPO_DIR} 
-                            docker build -t ${DOCKER_IMAGE} .
-                            docker images
-                            echo "Docker Image Build Berhasil"
-                            exit
-                           EOF
-                           """
-                       }
-                  }
-             }
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR} 
+                        docker build -t ${DOCKER_IMAGE} .
+                        docker images
+                        echo "Docker Image Build Berhasil"
+                        exit
+                        EOF
+                        """
+                    }
+                }
+            }
         }
-
         stage ('Build & Run Application') {
             steps {
-                script{
-                    sshagent([SSH_CREDENTIALS]){
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            cd ${REPO_DIR}
-                            npm version && echo "Aplikasi telah berjalan"
-                            exit
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR}
+                        export NVM_DIR="\$HOME/.nvm"
+                        [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
+                        nvm use 22
+                        node --version
+                        npm --version
+                        npm version && echo "Aplikasi telah berjalan"
+                        exit
                         EOF
                         """
                     }
