@@ -9,6 +9,7 @@ pipeline {
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
         PORT = "${BACKEND_STAGING_PORT}"
         APP_URL = "${BACKEND_STAGING_URL}"
+        CONTAINER_NAME = "backend-staging-test"
     }
 
     stages {
@@ -53,12 +54,12 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            if [ \$(docker ps -aq -f name=backend-staging-test) ]; then
-                                echo "Menghapus kontainer backend-staging-test yang sudah ada."
-                                docker rm -f backend-staging-test
+                            if [ docker ps -a | grep "${CONTAINER_NAME}" ]; then
+                                echo "Menghapus container ${CONTAINER_NAME}"
+                                docker rm -f ${CONTAINER_NAME}
                             fi
                             
-                            docker run -d -p ${PORT}:5000 --name backend-staging-test ${DOCKER_IMAGE}
+                            docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
                             echo "Aplikasi telah dijalankan!"
                             exit
                             EOF
