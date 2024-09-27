@@ -44,5 +44,23 @@ pipeline {
                   }
              }
         }
+
+        stage ('Run Application') {
+            steps {
+                script{
+                    sshagent([SSH_CREDENTIALS]){
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR}
+                        pm2 start ecosystem.config.js
+                        pm2 ls
+                        echo "Aplikasi telah berjalan"
+                        exit
+                        EOF
+                        """
+                    }
+                }
+            }
+        }
     }
 }
