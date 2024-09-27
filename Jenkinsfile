@@ -29,11 +29,13 @@ pipeline {
                    script{
                        sshagent([SSH_CREDENTIALS]) {
                            sh """
-                           ssh -o StrickHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} '
+                            ssh -o StrickHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} '
                             cd ${REPO_DIR} 
-                            docker build -t ${DOCKER_IMAGE}
+                            docker build -t ${DOCKER_IMAGE} .
                             docker images
                             echo "Docker Image Build Berhasil"
+                            exit
+                            '
                            """
                        }
                   }
