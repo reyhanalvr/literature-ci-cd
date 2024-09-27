@@ -11,6 +11,7 @@ pipeline {
         REPO_DIR = "${REPO_DIR}" 
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
+        APP_URL =  103.196.153.95
     }
 
     stages {
@@ -59,15 +60,13 @@ pipeline {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            export PATH=\$PATH:/home/alvaro/.nvm/versions/node/v16.20.2/bin
-                            cd ${REPO_DIR}
-                            npm start
-                            echo "Aplikasi telah berjalan"
+                      sh """
+                        ssh -o StrictHostKeyChecking=no ${SERVER} << EOF
+                            wget --spider --timeout=30 --tries=1 ${APPURL}
+                            echo "Selesai Testing!"
                             exit
-                            EOF
-                        """
+                        EOF
+                    """
                     }
                 }
             }
