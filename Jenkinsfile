@@ -105,11 +105,11 @@ pipeline {
             
                         docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:staging
 
-                        # Melakukan push ke Dockerhub
+                        echo "Melakukan push ke Dockerhub"
                         docker push ${DOCKERHUB_REPO}:staging
 
                         sleep 1
-                        # Docker image telah di push ke repository
+                        echo "Docker image berhasil di push ke repository"
                         exit
                         EOF
                         """
