@@ -13,21 +13,22 @@ pipeline {
     }
 
     stages {
-        stage('Pull Staging Repository') {
+        stage('Pull dari Staging Repository') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         try {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            set -e
                             cd ${REPO_DIR} 
-                            git pull origign staging
+                            git pull origin staging
                             echo "Git Pull Telah Berhasil"
                             exit
                             EOF
                             """
                         } catch (Exception e) {
-                            error "Gagal menarik dari repository: ${e.message}"
+                            error "Git Pull Gagal: ${e.message}"
                         }
                     }
                 }
@@ -41,6 +42,7 @@ pipeline {
                         try {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            set -e
                             cd ${REPO_DIR} 
                             docker build -t ${DOCKER_IMAGE} .
                             docker images
@@ -49,7 +51,7 @@ pipeline {
                             EOF
                             """
                         } catch (Exception e) {
-                            error "Gagal membangun Docker image: ${e.message}"
+                            error "Docker Build Gagal: ${e.message}"
                         }
                     }
                 }
@@ -63,9 +65,10 @@ pipeline {
                         try {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            set -e
                             
                             echo "Menghapus container ${CONTAINER_NAME}"
-                            docker rm -f ${CONTAINER_NAME}
+                            docker rm -f ${CONTAINER_NAME} || true
 
                             sleep 2
 
@@ -76,21 +79,20 @@ pipeline {
                             EOF
                             """
                         } catch (Exception e) {
-                            error "Gagal menjalankan aplikasi: ${e.message}"
+                            error "Menjalankan Aplikasi Gagal: ${e.message}"
                         }
                     }
                 }
             }
         }
 
-        stage('Test Application'){
-            steps{
-                script{
-                    sshagent([SSH_CREDENTIALS]){
+        stage('Test Application') {
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
                         try {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            # Menguji aplikasi dengan wget
                             sleep 3
                             if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
                                 echo "Aplikasi berhasil dijalankan"
@@ -102,7 +104,7 @@ pipeline {
                             EOF
                             """
                         } catch (Exception e) {
-                            error "Pengujian aplikasi gagal: ${e.message}"
+                            error "Pengujian Aplikasi Gagal: ${e.message}"
                         }
                     }
                 }
