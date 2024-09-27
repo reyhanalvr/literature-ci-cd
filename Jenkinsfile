@@ -51,8 +51,8 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            docker run -p 5005:5000 --name backend-staging-test
-                            echo "Selesai Testing!"
+                            docker run -d -p 5005:5000 --name backend-staging-test %{DOCKER_IMAGE}
+                            echo "Aplikasi telah dijalankan!"
                             exit
                         EOF
                     """
