@@ -62,7 +62,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
-                            sh 'npm install'
+                            sh 'npm init'
                             exit
                         EOF
                         """
