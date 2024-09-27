@@ -56,21 +56,41 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                        cd ${REPO_DIR}
-                        source ~/.bash_profile
-                        source ~/.bashrc
-                        export NVM_DIR="\$HOME/.nvm"
-                        [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
-                        if command -v nvm &> /dev/null; then
-                            nvm use 22 || nvm use --lts
-                        fi
-                        node --version || echo "Node.js not found"
-                        npm --version || echo "npm not found"
-                        npm version && echo "Aplikasi telah berjalan"
-                        exit
-                        EOF
-                        """
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                            cd ${REPO_DIR}
+                            
+                            # Print debug information
+                            echo "User: \$(whoami)"
+                            echo "Home directory: \$HOME"
+                            echo "Current directory: \$(pwd)"
+                            echo "Shell: \$SHELL"
+                            
+                            # Load NVM
+                            export NVM_DIR="\$HOME/.nvm"
+                            [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"  # This loads nvm
+                            [ -s "\$NVM_DIR/bash_completion" ] && \\. "\$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+                            
+                            # Verify NVM is loaded
+                            command -v nvm
+                            
+                            # List available Node.js versions
+                            nvm ls
+                            
+                            # Use the desired Node.js version (adjust as needed)
+                            nvm use 22 || nvm use --lts || nvm use node
+                            
+                            # Verify Node.js and npm
+                            node --version
+                            npm --version
+                            
+                            # Print current PATH
+                            echo "Current PATH: \$PATH"
+                            
+                            # Run your commands
+                            npm version && echo "Aplikasi telah berjalan"
+                            exit
+                            EOF
+                            """
                     }
                 }
             }
