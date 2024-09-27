@@ -56,8 +56,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
-                            sh "npm version"
-                            echo "Aplikasi telah berjalan"
+                            npm version && echo "Aplikasi telah berjalan"
                             exit
                         EOF
                         """
