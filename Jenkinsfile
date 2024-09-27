@@ -61,7 +61,7 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
-                        ssh -o StrictHostKeyChecking=no ${SERVER} << EOF
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             wget --spider --timeout=30 --tries=1 ${APPURL}
                             echo "Selesai Testing!"
                             exit
