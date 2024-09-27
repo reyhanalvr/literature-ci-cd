@@ -1,0 +1,6 @@
+[submodule "literature-frontend"]
+    path = literature-frontend
+    url = https://github.com/dumbwaysdev/literature-frontend.git
+[submodule "literature-backend"]
+    path = literature-backend
+    url = https://github.com/dumbwaysdev/literature-backend.git
