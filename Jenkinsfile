@@ -14,6 +14,14 @@ pipeline {
     }
 
     stages {
+        stages {
+        stage('Verify Node.js Installation') {
+            steps {
+                sh 'node --version'
+                sh 'npm --version'
+                }
+            }
+        }
         stage('Pull dari Staging Repository') {
             steps {
                 script {
