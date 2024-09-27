@@ -16,13 +16,13 @@ services:
       - team2_network
 
   backend:
-    image: team2/literature/backend:staging
+    build: ./literature-backend
     container_name: backend_staging
     environment:
       DB_USERNAME: alvaro
       DB_PASSWORD: Thebe@tles45
       DB_DATABASE: literature
-      DB_HOST: db
+      DB_HOST: 103.196.153.95
     ports:
       - "5000:5000"
     depends_on:
@@ -31,11 +31,11 @@ services:
       - team2_network
 
   frontend:
-    image: team2/literature/frontend:ssl
+    build: ./literature-frontend
     container_name: frontend_staging
     stdin_open: true
     ports:
-      - "3000:80"
+      - "3000:3000"
     depends_on:
       - backend
       - db

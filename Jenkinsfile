@@ -7,7 +7,6 @@ pipeline {
         REPO_DIR = "${REPO_DIR}" 
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
-        APP_URL =  "http://103.196.153.95"
     }
 
     stages {

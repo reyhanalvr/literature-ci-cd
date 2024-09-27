@@ -3,7 +3,7 @@
     "username": "alvaro",
     "password": "Thebe@tles45",
     "database": "literature",
-    "host": "db",
+    "host": "103.196.153.95",
     "dialect": "mysql"
   },
   "test": {
