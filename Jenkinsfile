@@ -46,13 +46,13 @@ pipeline {
             }
         }
 
-        stage ('Build & Run Application') {
+        stage ('Run Application') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            wget --spider --timeout=30 --tries=1 ${APP_URL}
+                            docker run -p 5005:5000 --name backend-staging-test
                             echo "Selesai Testing!"
                             exit
                         EOF
