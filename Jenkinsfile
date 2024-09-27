@@ -47,7 +47,7 @@ pipeline {
             }
         }
 
-        stage ('Run Application') {
+        stage ('Run Test Application') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -74,15 +74,10 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             # Menguji aplikasi dengan wget
-                            response=\$(wget --spider --timeout=30 --tries=1 http://localhost:5005 2>&1)
-                            http_status=\$(echo "\$response" | grep "HTTP/" | awk '{print \$2}')
-                            
-                            if [ "\$http_status" == "404" ]; then
-                                echo "Aplikasi berhasil dijalankan dengan status 404!"
-                            elif [ "\$http_status" == "200" ]; then
-                                echo "Aplikasi berjalan dengan baik!"
-                            else
-                                echo "Aplikasi gagal dijalankan dengan status: \$http_status"
+                            if [wget --spider -q --server-response http://127.0.0.1:5009/ 2>&1 | grep "404 Not Found"; then
+                            echo "Aplikasi berhasil dijalankan"
+                            else 
+                                echo "Aplikasi gagal dijalankan"
                             fi
                             exit
                             EOF
