@@ -18,8 +18,8 @@ pipeline {
             steps {
                 sh 'node --version'
                 sh 'npm --version'
-                }
             }
+        }
         stage('Pull dari Staging Repository') {
             steps {
                 script {
@@ -38,32 +38,33 @@ pipeline {
         }
 
         stage ('Build docker image') {
-               steps{
-                   script{
-                       sshagent([SSH_CREDENTIALS]) {
-                           sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            cd ${REPO_DIR} 
-                            docker build -t ${DOCKER_IMAGE} .
-                            docker images
-                            echo "Docker Image Build Berhasil"
-                            exit
-                           EOF
-                           """
-                       }
-                  }
-             }
+            steps {
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR} 
+                        docker build -t ${DOCKER_IMAGE} .
+                        docker images
+                        echo "Docker Image Build Berhasil"
+                        exit
+                        EOF
+                        """
+                    }
+                }
+            }
         }
 
         stage ('Build & Run Application') {
             steps {
-                script{
-                    sshagent([SSH_CREDENTIALS]){
+                script {
+                    sshagent([SSH_CREDENTIALS]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            cd ${REPO_DIR}
-                            sh 'npm init'
-                            exit
+                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                        cd ${REPO_DIR}
+                        npm start
+                        echo "Aplikasi telah berjalan"
+                        exit
                         EOF
                         """
                     }
