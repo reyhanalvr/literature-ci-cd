@@ -54,10 +54,8 @@ pipeline {
                     sshagent([SSH_CREDENTIALS]) {
                       sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            if [ \$(docker ps -aq -f name=${CONTAINER_NAME}) ]; then
-                                echo "Menghapus container ${CONTAINER_NAME}"
-                                docker rm -f ${CONTAINER_NAME}
-                            fi
+                            docker ps -a | grep ${CONTAINER_NAME}
+
 
                             sleep 5
                             
