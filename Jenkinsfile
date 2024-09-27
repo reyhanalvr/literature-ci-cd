@@ -104,6 +104,7 @@ pipeline {
                         exit
                         EOF
                         """
+                        }
                     }
                 }
             }
