@@ -52,7 +52,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR}
-                            sh "pm2 -v"
+                            pm2 -v
                             echo "Aplikasi telah berjalan"
                             exit
                         EOF
