@@ -58,11 +58,15 @@ pipeline {
                         sh """
                         ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                         cd ${REPO_DIR}
+                        source ~/.bash_profile
+                        source ~/.bashrc
                         export NVM_DIR="\$HOME/.nvm"
                         [ -s "\$NVM_DIR/nvm.sh" ] && \\. "\$NVM_DIR/nvm.sh"
-                        nvm use 22
-                        node --version
-                        npm --version
+                        if command -v nvm &> /dev/null; then
+                            nvm use 22 || nvm use --lts
+                        fi
+                        node --version || echo "Node.js not found"
+                        npm --version || echo "npm not found"
                         npm version && echo "Aplikasi telah berjalan"
                         exit
                         EOF
