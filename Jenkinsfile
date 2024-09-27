@@ -1,9 +1,5 @@
 pipeline {
     agent any
-
-    tools {
-        nodejs "node-install"
-    }
     
     environment {
         REMOTE_SERVER = "${REMOTE_SERVER_STAGING}"
@@ -15,12 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Verify Node.js Installation') {
-            steps {
-                sh 'node --version'
-                sh 'npm --version'
-            }
-        }
         stage('Pull dari Staging Repository') {
             steps {
                 script {
@@ -30,7 +20,6 @@ pipeline {
                         cd ${REPO_DIR} 
                         git pull origin staging
                         echo "Git Pull Telah Berhasil"
-                        pm2 restart all
                         exit
                         EOF
                         """
