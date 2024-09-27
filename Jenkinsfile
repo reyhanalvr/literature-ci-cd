@@ -74,6 +74,7 @@ pipeline {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             sleep 7
+                            echo "Melakukan proses testing"
                             if wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '404'; then
                                 echo "Aplikasi berhasil dijalankan dengan status 404!"
                             elif wget --spider --timeout=30 --tries=1 ${APP_URL} | grep -q '200'; then
