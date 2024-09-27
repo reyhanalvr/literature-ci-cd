@@ -6,6 +6,7 @@ pipeline {
         SSH_USER = "${REMOTE_USER}"
         REPO_DIR = "${REPO_DIR}" 
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
+        DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
     }
 
     stages {
@@ -22,7 +23,21 @@ pipeline {
                 }
             }
         }
-    }
 
-    
+        stage ('Build docker image') {
+               steps{
+                   script{
+                       sshagent([SSH_CREDENTIALS]) {
+                           sh """
+                           ssh -o StrickHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} '
+                            cd ${REPO_DIR} 
+                            docker build -t ${DOCKER_IMAGE}
+                            docker images
+                            echo "Docker Image Build Berhasil"
+                           """
+                       }
+                  }
+             }
+        }
+    }
 }
