@@ -52,6 +52,7 @@ pipeline {
                             exit
                             EOF
                             """
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Build Docker Image Berhasil dari branch staging.", "success")
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Docker Build Failed* ❌", "Docker Build Gagal: ${e.message}", "error")
                             error("Docker Build failed.")
@@ -79,6 +80,7 @@ pipeline {
                             exit
                             EOF
                             """
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Run Application berhasil dari branch staging.", "success")
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Run Test Application Failed* ❌", "Gagal menjalankan aplikasi: ${e.message}", "error")
                             error("Run Test Application failed.")
@@ -97,14 +99,15 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             sleep 3
                             if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
+                                echo "Backend berjalan"
+                            else 
                                 echo "Backend tidak berjalan"
                                 exit 1
-                            else 
-                                echo "Backend berjalan"
                             fi
                             exit
                             EOF
                             """
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Test Aplikasi - Aplikasi Berjalan Dengan Baik dari branch staging.", "success")
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Test Application Failed* ❌", "Uji aplikasi gagal: ${e.message}", "error")
                             error("Test Application failed.")
@@ -132,6 +135,7 @@ pipeline {
                                 exit
                                 EOF
                                 """
+                                sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Push Docker Image ke Registry Berhasil dari branch staging.", "success")
                             } catch (Exception e) {
                                 sendDiscordNotification("❌ *Push Docker Image Failed* ❌", "Push Docker Image Gagal: ${e.message}", "error")
                                 error("Push Docker Image failed.")
@@ -159,6 +163,7 @@ pipeline {
                             exit
                             EOF
                             """
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Deploy Aplikasi on top docker berhasil dari branch staging.", "success")
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Deployment Failed* ❌", "Deploy aplikasi gagal: ${e.message}", "error")
                             error("Deploy App failed.")
