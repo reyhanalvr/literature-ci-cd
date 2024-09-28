@@ -41,7 +41,7 @@ stages {
 					cd ${REPO_DIR}
 
 	  				echo "Starting build docker image"
-     					docker build -t ${DOCKER_IMAGE}
+     					docker build -t ${DOCKER_IMAGE} .
 	  
 					echo "Docker image has been created"
 					exit
