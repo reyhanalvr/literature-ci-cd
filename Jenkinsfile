@@ -125,6 +125,7 @@ stages {
 	  					exit
       						EOF
       						"""
+							}
 						}
 					}
 				}
