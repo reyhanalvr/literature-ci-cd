@@ -55,8 +55,8 @@ stages {
 		}
 
 		stage('Run Application'){
-			script{
-				steps{
+			steps{
+				script{
 					sshagent([SSH_CREDENTIALS]){
 						sh"""
 						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
