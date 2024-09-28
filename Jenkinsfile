@@ -142,8 +142,21 @@ pipeline {
     }
 }
 
-def sendDiscordNotification(String message) {
+def sendDiscordNotification(String title, String description) {
+    def payload = [
+        embeds: [
+            [
+                title: title,
+                description: description,
+                color: 65280,  // Hijau
+                footer: [
+                    text: "Notifikasi dari Jenkins"
+                ]
+            ]
+        ]
+    ]
+    
     sh """
-        curl -H "Content-Type: application/json" -X POST -d '{"content": "${message}"}' ${DISCORD_WEBHOOK_URL}
+    curl -H "Content-Type: application/json" -d '${groovy.json.JsonOutput.toJson(payload)}' https://discord.com/api/webhooks/${DISCORD_WEBHOOK_URL}
     """
 }
