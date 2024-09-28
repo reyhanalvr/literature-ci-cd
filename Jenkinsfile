@@ -11,6 +11,7 @@ PORT = "${BACKEND_PRODUCTION_PORT}"
 CONTAINER_NAME = "${CONTAINER_BE_PRODUCTION}"
 APP_URL = "${BACKEND_PRODUCTION_URL}"
 DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
+DOCKERHUB_REPO = "${DOCKERHUB_BE_REPO}"
 }
 
 stages {
@@ -109,10 +110,43 @@ stages {
 						sh"""
 						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
 						echo "SSH BERHASIL"
-
+						cd ${REPO_DIR}
+      
       						echo "Dockerhub login"
 						echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+			
+      						docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:production
+
+     						echo "Pushing Docker Image To Registry"
+	    					docker push ${DOCKERHUB_REPO}:production
+
+   						sleep 2 
+	 					echo "docker image successfully pushed to the registry"
+	  					exit
+      						EOF
+      						"""
+						}
+					}
+				}
+			}
+
+		stage('Deploy App'){
+			steps{
+				script{
+					sshagent([SSH_CREDENTIALS]){
 						
+						sh"""
+						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
+						echo "SSH BERHASIL"
+						cd ${REPO_DIR}
+
+	    					sleep 4
+      						docker compose down
+	    					sleep 2
+
+						echo "Deploy app on top docker"
+	    					docker compose up -d
+
 	  					exit
       						EOF
       						"""
