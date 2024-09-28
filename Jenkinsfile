@@ -7,6 +7,8 @@ SSH_USER = "${REMOTE_USERNAME_PRODUCTION}"
 SSH_HOST = "${REMOTE_SERVER_PRODUCTION}"
 REPO_DIR = "${REPO_DIR_PRODUCTION}"
 DOCKER_IMAGE = "${DOCKER_IMAGE_PRODUCTION}"
+PORT = "${BACKEND_PRODUCTION_PORT}"
+CONTAINER_NAME = "${CONTAINER_BE_PRODUCTION}"
 }
 
 stages {
@@ -47,6 +49,24 @@ stages {
 					exit
 					EOF
 					"""
+					}
+				}
+			}
+		}
+
+		stage('Run Application'){
+			script{
+				steps{
+					sshagent([SSH_CREDENTIALS]){
+						sh"""
+						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
+						echo "SSH BERHASIL"
+						cd ${REPO_DIR}
+						
+      						docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
+	    					"App running on ${PORT}"
+      						EOF
+      						"""
 					}
 				}
 			}
