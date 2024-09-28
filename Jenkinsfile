@@ -29,7 +29,7 @@ pipeline {
                         EOF
                         """
                     }
-                    sendDiscordNotification ("Git Pull Berhasil")
+                    sendDiscordNotification("🚀 *Deployment Notification* 🚀\n\nGit Pull Berhasil dari branch staging.")
                 }
             }
         }
