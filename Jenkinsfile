@@ -12,7 +12,7 @@ pipeline {
         CONTAINER_NAME = "${CONTAINER_BE_STAGING}"
         DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
         DOCKERHUB_REPO = "${DOCKERHUB_BE_REPO}"
-
+        DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1289653557783433307/NfDHCLZVmyNW7v7bwUNMyoZ1NYSz0c7CjMgaVZ_bTcaU056lY4EUoAjaEn3ncWzccqCe"
     }
 
     stages {
@@ -29,6 +29,7 @@ pipeline {
                         EOF
                         """
                     }
+                    sendDiscordNotification ("Git Pull Berhasil")
                 }
             }
         }
@@ -139,4 +140,10 @@ pipeline {
             }
         }
     }
+}
+
+def sendDiscordNotification(String message) {
+    sh """
+        curl -H "Content-Type: application/json" -X POST -d '{"content": "${message}"}' ${DISCORD_WEBHOOK_URL}
+    """
 }
