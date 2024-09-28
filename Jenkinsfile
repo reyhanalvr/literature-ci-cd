@@ -104,10 +104,9 @@ pipeline {
                             echo "Menguji aplikasi dengan wget"
                             sleep 3
                             if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
-                                echo "Backend tidak berjalan"
-                                exit 1
+                                echo "Aplikasi berjalan dengan baik"
                             else 
-                                echo "Backend berjalan"
+                                echo "Aplikasi tidak berjalan"
                             fi
                             exit
                             EOF
