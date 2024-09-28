@@ -32,9 +32,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Git Pull Berhasil dari branch production.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Git Pull Berhasil dari branch production.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Deployment Gagal* ❌", "Git Pull Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Deployment Gagal: ${env.JOB_NAME}* ❌", "Git Pull Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Git Pull failed.")
                         }
                     }
@@ -57,9 +57,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Pembangunan Gambar Docker Berhasil.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Build Docker Image Success.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Pembangunan Gagal* ❌", "Pembangunan Gambar Docker Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Pembangunan Gagal: ${env.JOB_NAME}* ❌", "Pembangunan Gambar Docker Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Build Docker Image failed.")
                         }
                     }
@@ -83,9 +83,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Aplikasi Berhasil Dijalankan di Port ${PORT}.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Aplikasi Berhasil Dijalankan di Port ${PORT}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Gagal Menjalankan Aplikasi* ❌", "Gagal menjalankan aplikasi: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Gagal Menjalankan Aplikasi: ${env.JOB_NAME}* ❌", "Gagal menjalankan aplikasi: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Run Application failed.")
                         }
                     }
@@ -111,9 +111,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Test Aplikasi - Aplikasi Berjalan Dengan Baik.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Test Aplikasi - Aplikasi Berjalan Dengan Baik.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Gagal Uji Aplikasi* ❌", "Uji aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Gagal Uji Aplikasi: ${env.JOB_NAME}* ❌", "Uji aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Test Application failed.")
                         }
                     }
@@ -140,9 +140,9 @@ pipeline {
                                 exit
                                 EOF
                                 """
-                                sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Push Docker Image ke Registry Berhasil.", "success", DISCORD_WEBHOOK_URL)
+                                sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Push Docker Image ke Registry Berhasil.", "success", DISCORD_WEBHOOK_URL)
                             } catch (Exception e) {
-                                sendDiscordNotification("❌ *Gagal Push Gambar Docker* ❌", "Push Docker Image Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                                sendDiscordNotification("❌ *Gagal Push Gambar Docker: ${env.JOB_NAME}* ❌", "Push Docker Image Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                                 error("Push Docker Image failed.")
                             }
                         }
@@ -169,9 +169,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Notifikasi Deployment* 🚀", "Deploy Aplikasi Berhasil.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Notifikasi Deployment: ${env.JOB_NAME}* 🚀", "Deploy Aplikasi Berhasil.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Gagal Deploy Aplikasi* ❌", "Deploy aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Gagal Deploy Aplikasi: ${env.JOB_NAME}* ❌", "Deploy aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Deploy App failed.")
                         }
                     }
