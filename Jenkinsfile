@@ -67,7 +67,8 @@ stages {
 						docker rm -f ${CONTAINER_NAME}
       
       						docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
-	    					"App running on ${PORT}"
+	    					echo "App running on ${PORT}"
+	  					exit
       						EOF
       						"""
 					}
