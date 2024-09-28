@@ -4,7 +4,7 @@ pipeline {
     environment {
         REMOTE_SERVER = "${REMOTE_SERVER_STAGING}"
         SSH_USER = "${REMOTE_USERNAME_STAGING}"
-        REPO_DIR = "${REPO_DIR}" 
+        REPO_DIR = "${REPO_DIR_STAGING}" 
         SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
         DOCKER_IMAGE = "${DOCKER_IMAGE_STAGING}"
         PORT = "${BACKEND_STAGING_PORT}"
