@@ -34,26 +34,26 @@ stages {
 		}
 
 		stage('Build Docker Image '){
-		steps {
-			script{
-				sshagent([SSH_CREDENTIALS]){
-					sh """
-					ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
-					echo "SSH BERHASIL"
-					
-					cd ${REPO_DIR}
-
-	  				echo "Starting build docker image"
-     					docker build -t ${DOCKER_IMAGE} .
-	  
-					echo "Docker image has been created"
-					exit
-					EOF
-					"""
+			steps {
+				script{
+					sshagent([SSH_CREDENTIALS]){
+						sh """
+						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
+						echo "SSH BERHASIL"
+						
+						cd ${REPO_DIR}
+		
+						echo "Starting build docker image"
+						docker build -t ${DOCKER_IMAGE} .
+		  
+						echo "Docker image has been created"
+						exit
+						EOF
+						"""
+						}
 					}
 				}
 			}
-		}
 
 		stage('Run Application'){
 			steps{
