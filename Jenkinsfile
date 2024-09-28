@@ -1,3 +1,5 @@
+@Library('jenkins-shared-library')
+
 pipeline {
     agent any
     
@@ -175,22 +177,4 @@ pipeline {
     }
 }
 
-def sendDiscordNotification(String title, String description, String status) {
-    def color = (status == "success") ? 65280 : 16711680 // Hijau untuk sukses, Merah untuk error
-    def payload = [
-        embeds: [
-            [
-                title: title,
-                description: description,
-                color: color,
-                footer: [
-                    text: "Notifikasi dari Jenkins"
-                ]
-            ]
-        ]
-    ]
-    
-    sh """
-    curl -H "Content-Type: application/json" -d '${groovy.json.JsonOutput.toJson(payload)}' ${DISCORD_WEBHOOK_URL}
-    """
-}
+
