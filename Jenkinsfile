@@ -15,6 +15,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
         DOCKERHUB_REPO = "${DOCKERHUB_BE_REPO}"
         DISCORD_WEBHOOK_URL = "${DISCORD_WEBHOOK_URL}"
+        BRANCH = "staging"
     }
 
     stages {
@@ -27,14 +28,14 @@ pipeline {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
-                            git pull origin staging
+                            git pull origin ${BRANCH} // Menggunakan variabel branch
                             echo "Git Pull Telah Berhasil"
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🔄 *Pull Repository* 🔄", "Git Pull Berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Git Pull Berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Pull Repository Failed* ❌", "Git Pull Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Deployment Failed* ❌", "Git Pull Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Git Pull failed.")
                         }
                     }
@@ -42,6 +43,7 @@ pipeline {
             }
         }
 
+        // Stages lainnya tidak berubah, cukup ganti string di notifikasi sesuai dengan branch
         stage('Build Docker Image') {
             steps {
                 script {
@@ -55,9 +57,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🛠️ *Build Docker Image* 🛠️", "Build Docker Image Berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Build Docker Image Berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Build Docker Image Failed* ❌", "Docker Build Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("❌ *Docker Build Failed* ❌", "Docker Build Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Docker Build failed.")
                         }
                     }
@@ -83,7 +85,7 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Run Test Application* 🚀", "Run Application berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Run Application berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Run Test Application Failed* ❌", "Gagal menjalankan aplikasi: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Run Test Application failed.")
@@ -110,7 +112,7 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("✅ *Test Application* ✅", "Test Aplikasi - Aplikasi Berjalan Dengan Baik dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Test Aplikasi - Aplikasi Berjalan Dengan Baik dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Test Application Failed* ❌", "Uji aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Test Application failed.")
@@ -129,16 +131,16 @@ pipeline {
                                 sh """
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                                 echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-                                docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:staging
+                                docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:${BRANCH} // Menggunakan variabel branch
 
                                 echo "Melakukan push ke Dockerhub"
-                                docker push ${DOCKERHUB_REPO}:staging
+                                docker push ${DOCKERHUB_REPO}:${BRANCH}
 
                                 echo "Docker image berhasil di push ke repository"
                                 exit
                                 EOF
                                 """
-                                sendDiscordNotification("☁️ *Push Docker Image* ☁️", "Push Docker Image ke Registry Berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                                sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Push Docker Image ke Registry Berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                             } catch (Exception e) {
                                 sendDiscordNotification("❌ *Push Docker Image Failed* ❌", "Push Docker Image Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                                 error("Push Docker Image failed.")
@@ -166,7 +168,7 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Deploy App on Top Docker* 🚀", "Deploy Aplikasi on top docker berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Deploy Aplikasi on top docker berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
                             sendDiscordNotification("❌ *Deployment Failed* ❌", "Deploy aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Deploy App failed.")
