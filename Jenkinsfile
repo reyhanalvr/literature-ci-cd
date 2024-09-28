@@ -10,6 +10,7 @@ DOCKER_IMAGE = "${DOCKER_IMAGE_PRODUCTION}"
 PORT = "${BACKEND_PRODUCTION_PORT}"
 CONTAINER_NAME = "${CONTAINER_BE_PRODUCTION}"
 APP_URL = "${BACKEND_PRODUCTION_URL}"
+DOCKERHUB_CREDENTIALS = "${DOCKERHUB_CREDENTIALS}"
 }
 
 stages {
@@ -99,7 +100,26 @@ stages {
 				}
 			}
 		}
-	
-	
+
+		stage('Push Image To Registry'){
+			steps{
+				script{
+					sshagent([SSH_CREDENTIALS]){
+						withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]){
+						sh"""
+						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
+						echo "SSH BERHASIL"
+
+      						"Dockerhub login"
+						echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+						
+	  					exit
+      						EOF
+      						"""
+					}
+				}
+			}
+		}
+
 	}	
 }
