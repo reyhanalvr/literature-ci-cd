@@ -3,6 +3,8 @@ agent any
 
 environment {
 SSH_CREDENTIALS = "${SSH_CREDENTIALS}"
+SSH_USER = "${REMOTE_USERNAME_PRODUCTION}"
+SSH_HOST = "${REMOTE_SERVER_PRODUCTION}
 }
 
 stages {
@@ -11,7 +13,7 @@ stages {
 		script{
 			sshagent([SSH_CREDENTIALS]){
 				sh """
-				ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+				ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
 				echo "SSH BERHASIL"
 				exit
 				EOF
