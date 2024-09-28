@@ -1,0 +1,18 @@
+services:
+  frontend:
+    image: team2/literature/frontend:production
+    container_name: literature-frontend
+    restart: always
+    stdin_open: true
+    ports:
+      - "3000:3000"
+
+
+  frontend-backup:
+    image: team2/literature/frontend:production
+    container_name: literature-frontend-backup
+    restart: always
+    stdin_open: true
+    ports:
+      - "3001:3000"
+
