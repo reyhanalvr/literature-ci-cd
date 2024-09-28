@@ -9,6 +9,7 @@ REPO_DIR = "${REPO_DIR_PRODUCTION}"
 DOCKER_IMAGE = "${DOCKER_IMAGE_PRODUCTION}"
 PORT = "${BACKEND_PRODUCTION_PORT}"
 CONTAINER_NAME = "${CONTAINER_BE_PRODUCTION}"
+APP_URL = "${BACKEND_PRODUCTION_URL}"
 }
 
 stages {
@@ -67,7 +68,30 @@ stages {
 						docker rm -f ${CONTAINER_NAME}
       
       						docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
-	    					echo "App running on ${PORT}"
+	    					echo "App running on port ${PORT}"
+	  					exit
+      						EOF
+      						"""
+					}
+				}
+			}
+		}
+
+		stage('Test Application'){
+			steps{
+				script{
+					sshagent([SSH_CREDENTIALS]){
+						sh"""
+						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
+						echo "SSH BERHASIL"
+      
+						echo "Menguji aplikasi dengan wget"
+						sleep 3
+						if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
+							echo "Backend berjalan "
+						else 
+							echo "Backend tidak berjalan"
+						fi
 	  					exit
       						EOF
       						"""
