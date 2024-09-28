@@ -62,7 +62,10 @@ stages {
 						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
 						echo "SSH BERHASIL"
 						cd ${REPO_DIR}
-						
+      
+						echo "Menghapus container ${CONTAINER_NAME} yang berjalan"
+						docker rm -f ${CONTAINER_NAME}
+      
       						docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
 	    					"App running on ${PORT}"
       						EOF
