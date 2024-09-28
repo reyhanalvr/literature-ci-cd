@@ -31,9 +31,9 @@ pipeline {
                             exit
                             EOF
                             """
-                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Git Pull Berhasil dari branch staging.", "success")
+                            sendDiscordNotification("🚀 *Deployment Notification* 🚀", "Git Pull Berhasil dari branch staging.", "success", DISCORD_WEBHOOK_URL)
                         } catch (Exception e) {
-                            sendDiscordNotification("❌ *Deployment Failed* ❌", "Git Pull Gagal: ${e.message}", "error")
+                            sendDiscordNotification("❌ *Deployment Failed* ❌", "Git Pull Gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
                             error("Git Pull failed.")
                         }
                     }
