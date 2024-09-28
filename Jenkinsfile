@@ -110,7 +110,7 @@ stages {
 						ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << EOF
 						echo "SSH BERHASIL"
 
-      						"Dockerhub login"
+      						echo "Dockerhub login"
 						echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
 						
 	  					exit
