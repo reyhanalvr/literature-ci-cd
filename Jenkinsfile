@@ -23,6 +23,7 @@ pipeline {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
                         try {
+                            echo "DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}"
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
