@@ -57,7 +57,7 @@ pipeline {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
-                            docker build -t ${DOCKER_IMAGE} .
+                            docker buildx build --nocache -t ${DOCKER_IMAGE} .
                             echo "Docker Image Build Berhasil"
                             exit
                             EOF
