@@ -31,11 +31,11 @@ services:
       - team2_network
 
   frontend:
-    build: ./literature-frontend
+    image: team2/literature/frontend:testmultiplebuild
     container_name: frontend_staging
     stdin_open: true
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - backend
       - db

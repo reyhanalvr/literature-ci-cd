@@ -4,19 +4,19 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
-RUN npm install nodemon
-
 COPY . .
 
-# Multistage build
+RUN npm install
 
-FROM node:16-alpine
+#Multistage
+
+FROM node:16-alpine 
 
 WORKDIR /app
 
 COPY --from=builder /app .
 
+EXPOSE 3000
+
 CMD ["npm", "start"]
 
-EXPOSE 5000

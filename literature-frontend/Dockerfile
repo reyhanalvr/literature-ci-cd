@@ -1,22 +1,21 @@
-FROM node:16-alpine as builder
+FROM node:16-alpine as build
 
 WORKDIR /app
 
 COPY package*.json ./
 
-COPY . .
-
 RUN npm install
 
-#Multistage
+COPY . .
 
-FROM node:16-alpine 
+RUN npm run build
 
-WORKDIR /app
+FROM nginx:alpine
 
-COPY --from=builder /app .
+COPY --from=build /app/build /usr/share/nginx/html
 
-EXPOSE 3000
+# Expose port 80 for the Nginx server
+EXPOSE 80
 
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]
 
