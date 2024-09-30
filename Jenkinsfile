@@ -19,6 +19,16 @@ pipeline {
     }
 
     stages {
+        stage('Check for Changes in literature-backend') {
+            when {
+                changeset "literature-backend/**"
+            }
+            steps {
+                script {
+                    echo "Changes detected in literature-backend directory. Proceeding with the pipeline..."
+                }
+            }
+        }
         stage('Pull Repository') {
             steps {
                 script {
