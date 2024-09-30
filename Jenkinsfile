@@ -72,67 +72,45 @@ pipeline {
             }
         }
 
-        stage('Run Test Application') {
-            when {
-                changeset "literature-backend/**"
-            }
-            steps {
-                script {
-                    sshagent([SSH_CREDENTIALS]) {
-                        try {
-                            sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            echo "Menghapus container ${CONTAINER_NAME}"
-                            docker rm -f ${CONTAINER_NAME}
+stage('Run and Test Application') {
+    when {
+        changeset "literature-backend/**"
+    }
+    steps {
+        script {
+            sshagent([SSH_CREDENTIALS]) {
+                try {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
+                    echo "Menghapus container ${CONTAINER_NAME}"
+                    docker rm -f ${CONTAINER_NAME} || true
 
-                            sleep 2
+                    sleep 2
 
-                            echo "Menjalankan container ${CONTAINER_NAME}"
-                            docker run -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
-                            echo "Backend running"
-                            exit
-                            EOF
-                            """
-                            sendDiscordNotification("🚧 *Staging Deployment Notification* 🚧", "Run Application berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
-                        } catch (Exception e) {
-                            sendDiscordNotification("❌ *Run Test Application Failed* ❌", "Gagal menjalankan aplikasi: ${e.message}", "error", DISCORD_WEBHOOK_URL)
-                            error("Run Test Application failed.")
-                        }
-                    }
+                    echo "Menjalankan container ${CONTAINER_NAME}"
+                    docker run --rm -d -p ${PORT}:5000 --name ${CONTAINER_NAME} ${DOCKER_IMAGE}
+                    echo "Backend running"
+
+                    sleep 3
+                    if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
+                        echo "Backend berjalan"
+                    else 
+                        echo "Backend tidak berjalan"
+                        exit 1
+                    fi
+
+                    exit
+                    EOF
+                    """
+                    sendDiscordNotification("🚧 *Staging Deployment Notification* 🚧", "Run and Test Application berhasil dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
+                } catch (Exception e) {
+                    sendDiscordNotification("❌ *Run and Test Application Failed* ❌", "Gagal menjalankan atau menguji aplikasi: ${e.message}", "error", DISCORD_WEBHOOK_URL)
+                    error("Run and Test Application failed.")
                 }
             }
         }
-
-        stage('Test Application') {
-            when {
-                changeset "literature-backend/**"
-            }
-            steps {
-                script {
-                    sshagent([SSH_CREDENTIALS]) {
-                        try {
-                            sh """
-                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
-                            sleep 3
-                            if wget --spider --server-response ${APP_URL} 2>&1 | grep -q "404 Not Found"; then
-                                echo "Backend berjalan"
-                            else 
-                                echo "Backend tidak berjalan"
-                                exit 1
-                            fi
-                            exit
-                            EOF
-                            """
-                            sendDiscordNotification("🚧 *Staging Deployment Notification* 🚧", "Test Aplikasi - Aplikasi Berjalan Dengan Baik dari branch ${BRANCH}.", "success", DISCORD_WEBHOOK_URL)
-                        } catch (Exception e) {
-                            sendDiscordNotification("❌ *Test Application Failed* ❌", "Uji aplikasi gagal: ${e.message}", "error", DISCORD_WEBHOOK_URL)
-                            error("Test Application failed.")
-                        }
-                    }
-                }
-            }
-        }
-
+    }
+}
         stage('Push Docker Image') {
             when {
                 changeset "literature-backend/**"
