@@ -19,17 +19,10 @@ pipeline {
     }
 
     stages {
-        stage('Check for Changes in literature-backend') {
+        stage('Pull Repository') {
             when {
                 changeset "literature-backend/**"
             }
-            steps {
-                script {
-                    echo "Changes detected in literature-backend directory. Proceeding with the pipeline..."
-                }
-            }
-        }
-        stage('Pull Repository') {
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -38,7 +31,7 @@ pipeline {
                             sh """
                             ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                             cd ${REPO_DIR} 
-                            git pull origin ${BRANCH} // Menggunakan variabel branch
+                            git pull origin ${BRANCH}
                             echo "Git Pull Telah Berhasil"
                             exit
                             EOF
@@ -54,6 +47,9 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            when {
+                changeset "literature-backend/**"
+            }
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -77,6 +73,9 @@ pipeline {
         }
 
         stage('Run Test Application') {
+            when {
+                changeset "literature-backend/**"
+            }
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -105,6 +104,9 @@ pipeline {
         }
 
         stage('Test Application') {
+            when {
+                changeset "literature-backend/**"
+            }
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -132,6 +134,9 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+            when {
+                changeset "literature-backend/**"
+            }
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
@@ -140,7 +145,7 @@ pipeline {
                                 sh """
                                 ssh -o StrictHostKeyChecking=no ${SSH_USER}@${REMOTE_SERVER} << EOF
                                 echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-                                docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:${BRANCH} // Menggunakan variabel branch
+                                docker tag ${DOCKER_IMAGE} ${DOCKERHUB_REPO}:${BRANCH}
 
                                 echo "Melakukan push ke Dockerhub"
                                 docker push ${DOCKERHUB_REPO}:${BRANCH}
@@ -161,6 +166,9 @@ pipeline {
         }
 
         stage('Deploy App on Top Docker') {
+            when {
+                changeset "literature-backend/**"
+            }
             steps {
                 script {
                     sshagent([SSH_CREDENTIALS]) {
