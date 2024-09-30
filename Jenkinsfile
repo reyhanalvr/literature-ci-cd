@@ -160,8 +160,8 @@ pipeline {
                             cd ${REPO_DIR}
                             
                             echo "Deploy aplikasi on top docker"
-                            docker compose down
-                            docker compose up -d
+                            docker compose down backend
+                            docker compose up backend -d
 
                             echo "Aplikasi telah berjalan"
                             exit
