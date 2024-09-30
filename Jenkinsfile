@@ -179,6 +179,7 @@ pipeline {
                             
                             echo "Deploy aplikasi on top docker"
                             docker compose down backend
+                            docker compose pull
                             docker compose up backend -d
 
                             echo "Aplikasi telah berjalan"
